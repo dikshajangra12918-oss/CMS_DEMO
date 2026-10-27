@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count-Min Sketch Tables</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:760px;margin:24px auto;padding:0 16px;color:#172033}
+table{border-collapse:collapse;width:100%;margin:12px 0 22px}
+th,td{border:1px solid #bfc7d4;padding:12px;text-align:center}
+th{background:#eef2f8}
+h3{margin:22px 0 8px;font-size:1rem}
+button{padding:10px 18px;border:0;border-radius:8px;background:#245db5;color:#fff;font-size:1rem;cursor:pointer;margin-right:8px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.highlight{background:#ffe8a3;font-weight:bold}
+</style>
+</head>
+<body>
+<table>
+<thead><tr><th>Search</th><th>Row 1 counter</th><th>Row 2 counter</th></tr></thead>
+<tbody>
+<tr><td>AI</td><td>C2</td><td>C1</td></tr>
+<tr><td>Weather</td><td>C2</td><td>C3</td></tr>
+<tr><td>Cricket</td><td>C3</td><td>C1</td></tr>
+</tbody>
+</table>
+<h3>Counter Table</h3>
+<table>
+<thead><tr><th>Row / Counter</th><th>C1</th><th>C2</th><th>C3</th></tr></thead>
+<tbody>
+<tr><th>Row 1</th><td id="r10">0</td><td id="r11">0</td><td id="r12">0</td></tr>
+<tr><th>Row 2</th><td id="r20">0</td><td id="r21">0</td><td id="r22">0</td></tr>
+</tbody>
+</table>
+<button id="next">Next</button><button id="reset">Reset</button>
+<script>
+const stream=["AI","Weather","AI","Cricket","Weather","AI"];
+const mapping={"AI":[1,0],"Weather":[1,2],"Cricket":[2,0]};
+let step=0, rows=[[0,0,0],[0,0,0]];
+function render(){
+ for(let r=0;r<2;r++) for(let c=0;c<3;c++){
+  let el=document.getElementById("r"+(r+1)+c);
+  el.textContent=rows[r][c]; el.className="";
+ }
+ if(step>0){
+  let [a,b]=mapping[stream[step-1]];
+  document.getElementById("r1"+a).className="highlight";
+  document.getElementById("r2"+b).className="highlight";
+ }
+ document.getElementById("next").disabled=step===stream.length;
+}
+document.getElementById("next").onclick=()=>{
+ const [a,b]=mapping[stream[step]];
+ rows[0][a]++; rows[1][b]++; step++; render();
+};
+document.getElementById("reset").onclick=()=>{step=0;rows=[[0,0,0],[0,0,0]];render();};
+render();
+</script>
+</body>
+</html>
